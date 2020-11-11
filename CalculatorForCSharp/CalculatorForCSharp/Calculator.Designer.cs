@@ -109,6 +109,7 @@
             this.btnEqual.TabIndex = 48;
             this.btnEqual.Text = "＝";
             this.btnEqual.UseVisualStyleBackColor = true;
+            this.btnEqual.Click += new System.EventHandler(this.btnEqual_Click);
             // 
             // btnBackspace
             // 
@@ -119,6 +120,7 @@
             this.btnBackspace.TabIndex = 43;
             this.btnBackspace.Text = "←";
             this.btnBackspace.UseVisualStyleBackColor = true;
+            this.btnBackspace.Click += new System.EventHandler(this.btnBackspace_Click);
             // 
             // btnC
             // 
@@ -129,6 +131,7 @@
             this.btnC.TabIndex = 42;
             this.btnC.Text = "C";
             this.btnC.UseVisualStyleBackColor = true;
+            this.btnC.Click += new System.EventHandler(this.btnC_Click);
             // 
             // btnCE
             // 
@@ -139,6 +142,7 @@
             this.btnCE.TabIndex = 41;
             this.btnCE.Text = "CE";
             this.btnCE.UseVisualStyleBackColor = true;
+            this.btnCE.Click += new System.EventHandler(this.btnCE_Click);
             // 
             // btnNine
             // 

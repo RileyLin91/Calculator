@@ -13,10 +13,16 @@ namespace CalculatorForCSharp
     public partial class Calculator : Form
     {
         public string currentString;
+        public string preString;
+        public string currentOperand;
+        public string preOperand;
+        public bool IsOperand = false;
+        public bool IsEqual = false;
         public Calculator()
         {
             InitializeComponent();
 
+            // 數字
             this.btnZero.Click += new System.EventHandler(this.btnNum_Click);
             this.btnOne.Click += new System.EventHandler(this.btnNum_Click);
             this.btnTwo.Click += new System.EventHandler(this.btnNum_Click);
@@ -28,13 +34,17 @@ namespace CalculatorForCSharp
             this.btnEight.Click += new System.EventHandler(this.btnNum_Click);
             this.btnNine.Click += new System.EventHandler(this.btnNum_Click);
             this.btnDot.Click += new System.EventHandler(this.btnNum_Click);
+
+            // 運算元
+            this.btnAdd.Click += new System.EventHandler(this.btnOperand_Click);
+            this.btnSubtract.Click += new System.EventHandler(this.btnOperand_Click);
+            this.btnMultiply.Click += new System.EventHandler(this.btnOperand_Click);
+            this.btnDivide.Click += new System.EventHandler(this.btnOperand_Click);
         }
 
         private void Calculator_Load(object sender, EventArgs e)
         {
             this.KeyPreview = true;
-
-
         }
 
         /// <summary>
@@ -104,13 +114,21 @@ namespace CalculatorForCSharp
         /// <returns></returns>
         private string StringFun(int value)
         {
-            if (tbxResult.Text == "0")  // 開始數字為零
+            IsOperand = false;
+
+            if (tbxResult.Text == "0" && string.IsNullOrEmpty(currentOperand))  // 開始數字為零
             {
                 return value.ToString();
             }
-            else
+            else if (string.IsNullOrEmpty(currentOperand)) // 尚未選擇運算元
             {
                 return tbxResult.Text + value.ToString();
+            }
+            else // 已經選擇運算元
+            {
+                preOperand = currentOperand;
+                currentOperand = string.Empty;
+                return value.ToString();
             }
         }
 
@@ -121,6 +139,8 @@ namespace CalculatorForCSharp
         /// <returns></returns>
         private string StringFun(string value)
         {
+            IsOperand = false;
+
             if (tbxResult.Text.IndexOf(".") == -1)
                 return tbxResult.Text + value.ToString();
             else
@@ -138,14 +158,166 @@ namespace CalculatorForCSharp
 
             if (btn.Text == ".")
             {
-                currentString = StringFun(".");
+                if (IsOperand)
+                {
+                    currentString = "0.";
+                    IsOperand = false;
+                    preString = string.Empty;
+                    preOperand = string.Empty;
+                    currentOperand = string.Empty;
+                }
+                else
+                {
+                    currentString = StringFun(".");
+                }
             }
             else if (!(tbxResult.Text == "0" && btn.Text == "0"))
             {
                 currentString = StringFun(Int16.Parse(btn.Text));
             }
 
+            if (!string.IsNullOrEmpty(preString) && !string.IsNullOrEmpty(currentString))
+                IsEqual = false;
+
             tbxResult.Text = currentString;
+        }
+
+        /// <summary>
+        /// 運算元（加減乘除）
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnOperand_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            if (!IsOperand)
+            {
+                if (!string.IsNullOrEmpty(preOperand))
+                {
+                    switch (preOperand)
+                    {
+                        case "+":
+                            tbxResult.Text = (Double.Parse(preString) + Double.Parse(currentString)).ToString();
+                            break;
+                        case "-":
+                            tbxResult.Text = (Double.Parse(preString) - Double.Parse(currentString)).ToString();
+                            break;
+                        case "*":
+                            tbxResult.Text = (Double.Parse(preString) * Double.Parse(currentString)).ToString();
+                            break;
+                        case "/":
+                            tbxResult.Text = (Double.Parse(preString) / Double.Parse(currentString)).ToString();
+                            break;
+                    }
+
+                    preOperand = string.Empty;
+                }
+            }
+
+            switch (btn.Name)
+            {
+                case "btnAdd":
+                    currentOperand = "+";
+                    break;
+                case "btnSubtract":
+                    currentOperand = "-";
+                    break;
+                case "btnMultiply":
+                    currentOperand = "*";
+                    break;
+                case "btnDivide":
+                    currentOperand = "/";
+                    break;
+            }
+
+            if (tbxResult.Text.EndsWith("."))
+            {
+                tbxResult.Text = tbxResult.Text.TrimEnd('.');
+            }
+
+            preString = tbxResult.Text;
+
+            IsOperand = true;
+        }
+
+        /// <summary>
+        /// 等號運算作業
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnEqual_Click(object sender, EventArgs e)
+        {
+            IsOperand = true;
+            IsEqual = true;
+
+            if (!string.IsNullOrEmpty(preOperand) && !string.IsNullOrEmpty(preString) && !string.IsNullOrEmpty(currentString))
+            {
+                switch (preOperand)
+                {
+                    case "+":
+                        tbxResult.Text = (Decimal.Parse(preString) + Decimal.Parse(currentString)).ToString();
+                        break;
+                    case "-":
+                        tbxResult.Text = (Decimal.Parse(preString) - Decimal.Parse(currentString)).ToString();
+                        break;
+                    case "*":
+                        tbxResult.Text = (Decimal.Parse(preString) * Decimal.Parse(currentString)).ToString();
+                        break;
+                    case "/":
+                        tbxResult.Text = (Decimal.Parse(preString) / Decimal.Parse(currentString)).ToString();
+                        break;
+                }
+
+                preString = tbxResult.Text;
+            }
+        }
+
+        /// <summary>
+        /// 清除歸零
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnC_Click(object sender, EventArgs e)
+        {
+            tbxResult.Text = "0";
+            currentString = string.Empty;
+            preString = string.Empty;
+            currentOperand = string.Empty;
+            preOperand = string.Empty;
+            IsOperand = false;
+        }
+
+        /// <summary>
+        /// 更新當前輸入數值
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCE_Click(object sender, EventArgs e)
+        {
+            tbxResult.Text = "0";
+        }
+
+        private void btnBackspace_Click(object sender, EventArgs e)
+        {
+            if (!IsEqual)
+            {
+                string value = tbxResult.Text;
+
+                value = value.Remove(value.Length - 1, 1);
+
+                if (Decimal.TryParse(value, out Decimal r))
+                {
+                    if (r < 0)
+                    {
+                        value = "0";
+                    }
+                }
+
+                currentString = value;
+
+                tbxResult.Text = currentString;
+            }
         }
     }
 }
