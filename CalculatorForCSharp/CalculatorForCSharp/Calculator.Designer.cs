@@ -281,6 +281,8 @@
             this.Controls.Add(this.tbxResult);
             this.Name = "Calculator";
             this.Text = "Calculator";
+            this.Load += new System.EventHandler(this.Calculator_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Calculator_KeyUp);
             this.ResumeLayout(false);
             this.PerformLayout();
 
