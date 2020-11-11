@@ -16,11 +16,25 @@ namespace CalculatorForCSharp
         public Calculator()
         {
             InitializeComponent();
+
+            this.btnZero.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnOne.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnTwo.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnThree.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnFour.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnFive.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnSix.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnSeven.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnEight.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnNine.Click += new System.EventHandler(this.btnNum_Click);
+            this.btnDot.Click += new System.EventHandler(this.btnNum_Click);
         }
 
         private void Calculator_Load(object sender, EventArgs e)
         {
             this.KeyPreview = true;
+
+
         }
 
         /// <summary>
@@ -111,6 +125,27 @@ namespace CalculatorForCSharp
                 return tbxResult.Text + value.ToString();
             else
                 return tbxResult.Text;
+        }
+
+        /// <summary>
+        /// 0-9 & dot 數字按鈕被點擊時觸發
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnNum_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            if (btn.Text == ".")
+            {
+                currentString = StringFun(".");
+            }
+            else if (!(tbxResult.Text == "0" && btn.Text == "0"))
+            {
+                currentString = StringFun(Int16.Parse(btn.Text));
+            }
+
+            tbxResult.Text = currentString;
         }
     }
 }
